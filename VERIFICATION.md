@@ -17,6 +17,10 @@ AWS AI changes every month. This file records what was checked before publishing
 | Prober Lambda `http` and `eval` actions | **Run** locally against the bank app |
 | Model inventory checker and models-in-use parsing | **Run** locally, including the Canada profile case |
 
+## Links
+
+Every external link in the README and the week guides (88 across this repo and its sister repo) was opened on October 30, 2026. Moved pages were updated to their new addresses.
+
 ## Not verified yet (please report what you see)
 
 No AWS account was used to build this course, so **nothing has been deployed end to end**. In particular:

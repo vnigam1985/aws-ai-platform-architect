@@ -214,7 +214,7 @@ Here you need to learn:
 - **MCP on AWS**: the official AWS MCP servers
 
 Resources:
-- [Amazon Bedrock AgentCore starter toolkit](https://aws.github.io/bedrock-agentcore-starter-toolkit/) (**FREE**, Docs)
+- [What is Amazon Bedrock AgentCore?](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/what-is-bedrock-agentcore.html) (**FREE**, Docs). Note: the old starter toolkit CLI is no longer supported; AWS now points to the AgentCore CLI (`npm install -g @aws/agentcore`)
 - [awslabs/mcp](https://github.com/awslabs/mcp) (**FREE**, Repo)
 - [awslabs/generative-ai-cdk-constructs](https://github.com/awslabs/generative-ai-cdk-constructs) (**FREE**, Repo)
 
@@ -285,7 +285,7 @@ Resources:
 The Machine Learning Specialty was retired on March 31, 2026.
 
 Paid prep:
-- [Ultimate AWS Certified Generative AI Developer Professional](https://www.udemy.com/course/ultimate-aws-certified-generative-ai-developer-professional/) by Frank Kane and Stephane Maarek (**Udemy**). Check the current rating before buying
+- [Ultimate AWS Certified Generative AI Developer Professional](https://www.udemy.com/course/ultimate-aws-certified-generative-ai-developer-professional/) by Frank Kane and Stephane Maarek. 4.6 from about 3,500 ratings, about 24 hours (**Udemy**, October 2026)
 
 ---
 
