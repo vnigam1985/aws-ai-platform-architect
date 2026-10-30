@@ -1,0 +1,58 @@
+# Week 0: the zero-cost local lab. Same shape as the AWS platform you build later:
+#
+#   app (Maple Leaf Bank) --> gateway (LiteLLM, the same software you run on ECS) --> model (Ollama, stands in for Bedrock)
+#
+#   make local-up      start everything
+#   make local-test    send test requests through the gateway
+#   make local-down    stop everything
+#
+# Ports: app 8000, gateway 4000, Ollama 11434 (Postgres stays internal: it stores gateway keys)
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+    ports: ["8000:8000"]
+    environment:
+      LLM_MODE: llm
+      OPENAI_BASE_URL: http://litellm:4000/v1
+      OPENAI_API_KEY: sk-team-retail-bank   # team key from make local-keys, not the admin key
+      MODEL: ${MODEL:-bank-chat}
+    depends_on: [litellm]
+
+  litellm:
+    image: ghcr.io/berriai/litellm:main-stable
+    command: ["--config", "/app/config.yaml", "--port", "4000"]
+    ports: ["4000:4000"]
+    environment:
+      LITELLM_MASTER_KEY: sk-local-lab-key
+      DATABASE_URL: postgresql://litellm:litellm@postgres:5432/litellm
+    volumes:
+      - ./local/litellm-config.yaml:/app/config.yaml:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: litellm
+      POSTGRES_PASSWORD: litellm
+      POSTGRES_DB: litellm
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U litellm"]
+      interval: 5s
+      retries: 10
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  ollama:
+    image: ollama/ollama:latest
+    ports: ["11434:11434"]
+    volumes:
+      - ollama:/root/.ollama
+
+volumes:
+  ollama:
+  pgdata:

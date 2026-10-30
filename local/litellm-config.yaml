@@ -1,0 +1,33 @@
+# Week 0 local AI gateway: LiteLLM proxy in front of Ollama.
+# It teaches the same ideas as the cloud AI gateway you build in week 4:
+#   one front door, a key per team, rate limits, and fallbacks.
+# Docs: https://docs.litellm.ai/docs/proxy/configs
+
+model_list:
+  # What apps ask for ("bank-chat") is decoupled from what serves it.
+  # In the cloud, the same name will point at Amazon Bedrock.
+  - model_name: bank-chat
+    litellm_params:
+      model: ollama_chat/qwen2.5:3b
+      api_base: http://ollama:11434
+      rpm: 30          # requests per minute this backend may take
+      tpm: 20000       # tokens per minute this backend may take
+
+  # A fake backend that never calls a model. Handy for testing the gateway itself.
+  - model_name: mock
+    litellm_params:
+      model: openai/mock
+      api_key: not-used
+      mock_response: "This is a mock answer from the local gateway."
+
+general_settings:
+  # The admin key. Only you use it, to create per-team keys (make local-keys).
+  # Apps get their own team key with its own limits, exactly like the gateway in week 4. Set in compose.yml; change it if you expose the gateway.
+  master_key: os.environ/LITELLM_MASTER_KEY
+  # Team keys live in Postgres (DATABASE_URL in compose.yml).
+  database_url: os.environ/DATABASE_URL
+
+router_settings:
+  # If the main backend fails, try the mock one so you can watch a fallback happen.
+  fallbacks:
+    - bank-chat: ["mock"]

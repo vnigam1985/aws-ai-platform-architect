@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Maple Leaf Bank Assistant</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 680px; margin: 40px auto; padding: 0 16px; color: #1a1a1a; }
+    h1 { font-size: 24px; }
+    form { display: flex; gap: 8px; }
+    input { flex: 1; padding: 10px; font-size: 16px; border: 1px solid #bbb; border-radius: 6px; }
+    button { padding: 10px 18px; font-size: 16px; border: 0; border-radius: 6px; background: #c8102e; color: #fff; cursor: pointer; }
+    #answer { margin-top: 20px; padding: 14px; background: #f4f4f4; border-radius: 6px; min-height: 24px; white-space: pre-wrap; }
+    small { color: #666; }
+  </style>
+</head>
+<body>
+  <h1>Maple Leaf Bank Assistant</h1>
+  <p><small>Fictional bank. A test target for the ai-quality-engineer repo.</small></p>
+  <form id="ask-form">
+    <label for="question" hidden>Your question</label>
+    <input id="question" name="question" placeholder="Ask about fees, cards, transfers..." autocomplete="off" required>
+    <button type="submit" id="ask-button">Ask</button>
+  </form>
+  <div id="answer" role="status" aria-live="polite" data-testid="answer"></div>
+  <script>
+    document.getElementById("ask-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const out = document.getElementById("answer");
+      out.textContent = "Thinking...";
+      const question = document.getElementById("question").value;
+      try {
+        const res = await fetch("/ask", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question })
+        });
+        const data = await res.json();
+        out.textContent = data.answer ?? "Something went wrong.";
+      } catch (err) {
+        out.textContent = "Something went wrong.";
+      }
+    });
+  </script>
+</body>
+</html>
