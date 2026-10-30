@@ -66,7 +66,7 @@ PASS  a made-up key is refused (401)
 PASS  team key works (200)
       answer: An AI gateway sits between apps and models and controls access...
 PASS  team key can't use other models (403)
-PASS  3rd call in a minute is throttled (429)
+PASS  the key's 2-per-minute limit kicks in (429)
 5 passed, 0 failed
 ```
 
