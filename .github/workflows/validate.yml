@@ -1,0 +1,53 @@
+# Checks the code on every push and pull request. No AWS account needed.
+name: validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - name: fmt and validate every week
+        run: |
+          terraform fmt -check -recursive infra
+          for d in infra/week0*; do
+            echo "::group::$d"
+            (cd "$d" && terraform init -backend=false -input=false > /dev/null && terraform validate)
+            echo "::endgroup::"
+          done
+
+  scripts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Shell scripts parse
+        run: for f in $(git ls-files '*.sh'); do bash -n "$f"; done
+      - name: JSON and YAML parse
+        run: |
+          pip install pyyaml
+          for f in $(git ls-files '*.json'); do python3 -m json.tool "$f" > /dev/null; done
+          for f in $(git ls-files '*.yaml' '*.yml'); do python3 -c "import yaml,sys; yaml.safe_load(open(sys.argv[1]))" "$f"; done
+      - name: Model inventory is valid
+        run: python3 scripts/check_model_inventory.py
+      - name: Prober Lambda works against the bank app (offline mode)
+        run: |
+          pip install -r app/requirements.txt
+          nohup uvicorn app.app:app --port 8000 > app.log 2>&1 &
+          for i in $(seq 1 30); do curl -fsS localhost:8000/health && break; sleep 1; done
+          python3 -c "
+          import sys; sys.path.insert(0, 'infra/lambda/prober')
+          import handler
+          r = handler.handler({'action': 'http', 'url': 'http://localhost:8000/health'}, None)
+          assert r['status'] == 200, r
+          print('prober http action OK')"

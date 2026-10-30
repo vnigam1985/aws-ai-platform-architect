@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="840" viewBox="0 0 1200 840" font-family="Inter, system-ui, sans-serif">
+<rect width="100%" height="100%" fill="#FFFFFF"/>
+<rect x="0" y="0" width="1200" height="120" fill="#193A63"/>
+<text x="60" y="62" font-size="34" font-weight="800" fill="#FFFFFF">Build an AI platform on AWS in 8 weeks</text>
+<text x="60" y="96" font-size="18" fill="#F4F4F4">One private, governed platform for Amazon Bedrock, built week by week in Terraform. For a bank.</text>
+<line x1="390" y1="245.0" x2="435" y2="245.0" stroke="#F5A623" stroke-width="4"/>
+<line x1="765" y1="245.0" x2="810" y2="245.0" stroke="#F5A623" stroke-width="4"/>
+<line x1="975.0" y1="330" x2="975.0" y2="370" stroke="#F5A623" stroke-width="4"/>
+<line x1="810" y1="455.0" x2="765" y2="455.0" stroke="#F5A623" stroke-width="4"/>
+<line x1="435" y1="455.0" x2="390" y2="455.0" stroke="#F5A623" stroke-width="4"/>
+<line x1="225.0" y1="540" x2="225.0" y2="580" stroke="#F5A623" stroke-width="4"/>
+<line x1="390" y1="665.0" x2="435" y2="665.0" stroke="#F5A623" stroke-width="4"/>
+<line x1="765" y1="665.0" x2="810" y2="665.0" stroke="#F5A623" stroke-width="4"/>
+<rect x="60" y="160" width="330" height="170" rx="14" fill="#F4F4F4" stroke="#193A63" stroke-width="2"/>
+<circle cx="100" cy="202" r="24" fill="#F5A623"/><text x="100" y="210" text-anchor="middle" font-size="22" font-weight="800" fill="#FFFFFF">0</text>
+<text x="138" y="200" font-size="13" font-weight="600" fill="#4A4A4A">WEEK 0</text>
+<text x="138" y="222" font-size="20" font-weight="700" fill="#193A63">Local lab + budget</text>
+<text x="84" y="265" font-size="16" fill="#1A1A1A">LiteLLM gateway, Ollama, $0</text>
+<rect x="84" y="282" width="282" height="30" rx="6" fill="#193A63"/><text x="96" y="302" font-size="15" font-family="ui-monospace, Menlo, monospace" fill="#F5A623">$ make local-up</text>
+<rect x="435" y="160" width="330" height="170" rx="14" fill="#F4F4F4" stroke="#193A63" stroke-width="2"/>
+<circle cx="475" cy="202" r="24" fill="#F5A623"/><text x="475" y="210" text-anchor="middle" font-size="22" font-weight="800" fill="#FFFFFF">1</text>
+<text x="513" y="200" font-size="13" font-weight="600" fill="#4A4A4A">WEEK 1</text>
+<text x="513" y="222" font-size="20" font-weight="700" fill="#193A63">A VPC with no way out</text>
+<text x="459" y="265" font-size="16" fill="#1A1A1A">No IGW, no NAT, endpoints only</text>
+<rect x="459" y="282" width="282" height="30" rx="6" fill="#193A63"/><text x="471" y="302" font-size="15" font-family="ui-monospace, Menlo, monospace" fill="#F5A623">$ make week1</text>
+<rect x="810" y="160" width="330" height="170" rx="14" fill="#F4F4F4" stroke="#193A63" stroke-width="2"/>
+<circle cx="850" cy="202" r="24" fill="#F5A623"/><text x="850" y="210" text-anchor="middle" font-size="22" font-weight="800" fill="#FFFFFF">2</text>
+<text x="888" y="200" font-size="13" font-weight="600" fill="#4A4A4A">WEEK 2</text>
+<text x="888" y="222" font-size="20" font-weight="700" fill="#193A63">Private model</text>
+<text x="834" y="265" font-size="16" fill="#1A1A1A">Bedrock via endpoint, ca. profile</text>
+<rect x="834" y="282" width="282" height="30" rx="6" fill="#193A63"/><text x="846" y="302" font-size="15" font-family="ui-monospace, Menlo, monospace" fill="#F5A623">$ make week2-test</text>
+<rect x="810" y="370" width="330" height="170" rx="14" fill="#F4F4F4" stroke="#193A63" stroke-width="2"/>
+<circle cx="850" cy="412" r="24" fill="#F5A623"/><text x="850" y="420" text-anchor="middle" font-size="22" font-weight="800" fill="#FFFFFF">3</text>
+<text x="888" y="410" font-size="13" font-weight="600" fill="#4A4A4A">WEEK 3</text>
+<text x="888" y="432" font-size="20" font-weight="700" fill="#193A63">Guardrails as code</text>
+<text x="834" y="475" font-size="16" fill="#1A1A1A">Guardrail + IAM boundary</text>
+<rect x="834" y="492" width="282" height="30" rx="6" fill="#193A63"/><text x="846" y="512" font-size="15" font-family="ui-monospace, Menlo, monospace" fill="#F5A623">$ make week3-test</text>
+<rect x="435" y="370" width="330" height="170" rx="14" fill="#F4F4F4" stroke="#193A63" stroke-width="2"/>
+<circle cx="475" cy="412" r="24" fill="#F5A623"/><text x="475" y="420" text-anchor="middle" font-size="22" font-weight="800" fill="#FFFFFF">4</text>
+<text x="513" y="410" font-size="13" font-weight="600" fill="#4A4A4A">WEEK 4</text>
+<text x="513" y="432" font-size="20" font-weight="700" fill="#193A63">AI gateway</text>
+<text x="459" y="475" font-size="16" fill="#1A1A1A">LiteLLM on Fargate, team keys</text>
+<rect x="459" y="492" width="282" height="30" rx="6" fill="#193A63"/><text x="471" y="512" font-size="15" font-family="ui-monospace, Menlo, monospace" fill="#F5A623">$ make week4-test</text>
+<rect x="60" y="370" width="330" height="170" rx="14" fill="#F4F4F4" stroke="#193A63" stroke-width="2"/>
+<circle cx="100" cy="412" r="24" fill="#F5A623"/><text x="100" y="420" text-anchor="middle" font-size="22" font-weight="800" fill="#FFFFFF">5</text>
+<text x="138" y="410" font-size="13" font-weight="600" fill="#4A4A4A">WEEK 5</text>
+<text x="138" y="432" font-size="20" font-weight="700" fill="#193A63">Private app</text>
+<text x="84" y="475" font-size="16" fill="#1A1A1A">Bank assistant, zero AWS perms</text>
+<rect x="84" y="492" width="282" height="30" rx="6" fill="#193A63"/><text x="96" y="512" font-size="15" font-family="ui-monospace, Menlo, monospace" fill="#F5A623">$ make week5-test</text>
+<rect x="60" y="580" width="330" height="170" rx="14" fill="#F4F4F4" stroke="#193A63" stroke-width="2"/>
+<circle cx="100" cy="622" r="24" fill="#F5A623"/><text x="100" y="630" text-anchor="middle" font-size="22" font-weight="800" fill="#FFFFFF">6</text>
+<text x="138" y="620" font-size="13" font-weight="600" fill="#4A4A4A">WEEK 6</text>
+<text x="138" y="642" font-size="20" font-weight="700" fill="#193A63">Detect + respond</text>
+<text x="84" y="685" font-size="16" fill="#1A1A1A">Abuse alarms, GuardDuty AI</text>
+<rect x="84" y="702" width="282" height="30" rx="6" fill="#193A63"/><text x="96" y="722" font-size="15" font-family="ui-monospace, Menlo, monospace" fill="#F5A623">$ make week6</text>
+<rect x="435" y="580" width="330" height="170" rx="14" fill="#F4F4F4" stroke="#193A63" stroke-width="2"/>
+<circle cx="475" cy="622" r="24" fill="#F5A623"/><text x="475" y="630" text-anchor="middle" font-size="22" font-weight="800" fill="#FFFFFF">7</text>
+<text x="513" y="620" font-size="13" font-weight="600" fill="#4A4A4A">WEEK 7</text>
+<text x="513" y="642" font-size="20" font-weight="700" fill="#193A63">Observability + FinOps</text>
+<text x="459" y="685" font-size="16" fill="#1A1A1A">Tagged profiles, cost by team</text>
+<rect x="459" y="702" width="282" height="30" rx="6" fill="#193A63"/><text x="471" y="722" font-size="15" font-family="ui-monospace, Menlo, monospace" fill="#F5A623">$ make week7</text>
+<rect x="810" y="580" width="330" height="170" rx="14" fill="#F4F4F4" stroke="#193A63" stroke-width="2"/>
+<circle cx="850" cy="622" r="24" fill="#F5A623"/><text x="850" y="630" text-anchor="middle" font-size="22" font-weight="800" fill="#FFFFFF">8</text>
+<text x="888" y="620" font-size="13" font-weight="600" fill="#4A4A4A">WEEK 8</text>
+<text x="888" y="642" font-size="20" font-weight="700" fill="#193A63">CI/CD + release gate</text>
+<text x="834" y="685" font-size="16" fill="#1A1A1A">OIDC, in-VPC gate, E-23</text>
+<rect x="834" y="702" width="282" height="30" rx="6" fill="#193A63"/><text x="846" y="722" font-size="15" font-family="ui-monospace, Menlo, monospace" fill="#F5A623">$ make week8-gate</text>
+<text x="60" y="818" font-size="15" fill="#4A4A4A">github.com/vnigam1985/aws-ai-platform-architect  ·  by Vishal Nigam  ·  linkedin.com/in/nigam-vishal</text></svg>

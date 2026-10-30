@@ -1,0 +1,49 @@
+# Model inventory for the AI platform lab.
+#
+# OSFI Guideline E-23 (Model Risk Management, in force May 1, 2027) expects
+# federally regulated financial institutions in Canada to keep an inventory of
+# their models, including AI and machine learning models, with ownership,
+# purpose, risk rating and validation status. This file is a small,
+# version-controlled version of that. In week 8 the pipeline compares it with
+# what the platform actually serves (scripts/aws-models-in-use.sh). A model in
+# use that isn't in this file fails the release.
+#
+# This is a learning template, not legal or compliance advice.
+
+schema_version: 1
+models:
+  - id: bank-assistant-llm
+    name: Maple Leaf Bank assistant (RAG + agent)
+    deployment_name: "gateway:bank-chat"      # the gateway alias apps call
+    provider_model: ca.amazon.nova-lite-v1:0  # after week 7: the retail profile copies this
+    deployment_type: canada-cross-region       # processed only in ca-central-1 and ca-west-1
+    vendor: Amazon (Amazon Bedrock)
+    region: ca-central-1
+    business_owner: Retail Banking Digital
+    technical_owner: AI Platform Team
+    purpose: Answer customer questions from published bank policies; check balances, lock cards, and start transfers with customer confirmation
+    out_of_scope_uses:
+      - Financial, investment or credit advice
+      - Decisions about credit, fraud or account closure
+    risk_rating: High
+    materiality_rationale: Customer-facing; agent can initiate transfers up to $1,000 with confirmation
+    data_classification: Confidential
+    personal_information: true
+    human_oversight: Transfers require explicit customer confirmation; platform enforces a $1,000 limit in code
+    controls:
+      - Egress-free VPC; Bedrock only through a VPC endpoint
+      - Bedrock Guardrail on every call, enforced by an IAM permissions boundary
+      - Approved model and Canada-only Regions enforced by the same boundary
+      - Model invocation logging to CloudWatch Logs
+      - AI gateway team keys with token and request limits
+      - Release gate on golden questions (evals/release-gate.json)
+    validation:
+      last_validated: "2026-10-30"
+      validated_by: AI Quality Engineering (independent of the build team)
+      method: Golden dataset, red teaming against OWASP LLM Top 10 2026, judge calibration
+      evidence: https://github.com/vnigam1985/ai-quality-engineer
+    monitoring:
+      - Gateway 401 and 429 alarms, Bedrock control tampering alerts (week 6)
+      - Daily output token alarm and team budget (week 7)
+    next_review: "2027-04-30"
+    status: approved-for-lab

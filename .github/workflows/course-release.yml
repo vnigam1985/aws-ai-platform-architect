@@ -1,0 +1,100 @@
+# Week 8: release pipeline for the bank assistant on your AWS AI platform.
+#
+#   1. inventory : every model the platform serves must be in the model inventory
+#   2. ship      : build the app image, push to ECR, roll out a new ECS task definition
+#   3. gate      : golden questions against the live app from INSIDE the VPC
+#                  (through the prober Lambda). Fail = roll back to the old task definition.
+#
+# Manual trigger only. One-time setup: weeks/08-cicd-release-gate/README.md
+#   - make week8 REPO=<you>/aws-ai-platform-architect   (creates the OIDC role)
+#   - Repo variables: AWS_ROLE_ARN, AWS_REGION (ca-central-1), PREFIX (aiplat)
+#   - GitHub environment "lab" with you as required reviewer
+name: course-release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency: course-release
+
+env:
+  PREFIX: ${{ vars.PREFIX || 'aiplat' }}
+
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    environment: lab
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - name: Models in use vs inventory
+        run: |
+          pip install pyyaml
+          ./scripts/aws-models-in-use.sh "$PREFIX" > in-use.json
+          python3 scripts/check_model_inventory.py --deployed in-use.json | tee -a "$GITHUB_STEP_SUMMARY"
+
+  ship:
+    needs: inventory
+    runs-on: ubuntu-latest
+    environment: lab
+    outputs:
+      previous_task_def: ${{ steps.prev.outputs.td }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - id: prev
+        name: Remember the running task definition (for rollback)
+        run: |
+          TD=$(aws ecs describe-services --cluster "$PREFIX-cluster" --services bank-assistant --query "services[0].taskDefinition" --output text)
+          echo "td=$TD" >> "$GITHUB_OUTPUT"
+      - name: Build, push, roll out
+        run: |
+          TAG="${GITHUB_SHA::7}"
+          ACCOUNT=$(aws sts get-caller-identity --query Account --output text)
+          REPO="$ACCOUNT.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/$PREFIX/maple-bank-assistant"
+          aws ecr get-login-password | docker login --username AWS --password-stdin "${REPO%%/*}"
+          docker build -t "$REPO:$TAG" -f app/Dockerfile . && docker push "$REPO:$TAG"
+          aws ecs describe-task-definition --task-definition "${{ steps.prev.outputs.td }}" --query taskDefinition > td.json
+          python3 - "$REPO:$TAG" <<'PY'
+          import json, sys
+          td = json.load(open("td.json"))
+          td["containerDefinitions"][0]["image"] = sys.argv[1]
+          keep = ["family", "taskRoleArn", "executionRoleArn", "networkMode", "containerDefinitions",
+                  "requiresCompatibilities", "cpu", "memory", "runtimePlatform"]
+          json.dump({k: td[k] for k in keep if k in td}, open("new-td.json", "w"))
+          PY
+          NEW=$(aws ecs register-task-definition --cli-input-json file://new-td.json --query taskDefinition.taskDefinitionArn --output text)
+          aws ecs update-service --cluster "$PREFIX-cluster" --service bank-assistant --task-definition "$NEW" > /dev/null
+          aws ecs wait services-stable --cluster "$PREFIX-cluster" --services bank-assistant
+          echo "Rolled out $REPO:$TAG" >> "$GITHUB_STEP_SUMMARY"
+
+  gate:
+    needs: ship
+    runs-on: ubuntu-latest
+    environment: lab
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - id: gate
+        name: Release gate (from inside the VPC)
+        run: |
+          ALB=$(aws elbv2 describe-load-balancers --names "$PREFIX-internal" --query "LoadBalancers[0].DNSName" --output text)
+          APP_URL="http://$ALB" ./scripts/release-gate.sh "$PREFIX" | tee gate.txt
+          { echo '```'; cat gate.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+      - name: Roll back on a failed gate
+        if: failure() && steps.gate.conclusion == 'failure'
+        run: |
+          aws ecs update-service --cluster "$PREFIX-cluster" --service bank-assistant --task-definition "${{ needs.ship.outputs.previous_task_def }}" > /dev/null
+          echo "Gate failed. Rolled back to ${{ needs.ship.outputs.previous_task_def }}" >> "$GITHUB_STEP_SUMMARY"
