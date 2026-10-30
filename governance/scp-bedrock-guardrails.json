@@ -1,0 +1,33 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DenyBedrockOutsideCanada",
+      "Effect": "Deny",
+      "Action": ["bedrock:InvokeModel", "bedrock:InvokeModelWithResponseStream"],
+      "Resource": "*",
+      "Condition": {
+        "StringNotEquals": { "aws:RequestedRegion": ["ca-central-1", "ca-west-1"] }
+      }
+    },
+    {
+      "Sid": "DenyModelCallsWithoutAGuardrail",
+      "Effect": "Deny",
+      "Action": ["bedrock:InvokeModel", "bedrock:InvokeModelWithResponseStream"],
+      "Resource": "*",
+      "Condition": { "Null": { "bedrock:GuardrailIdentifier": "true" } }
+    },
+    {
+      "Sid": "ProtectBedrockLogging",
+      "Effect": "Deny",
+      "Action": [
+        "bedrock:DeleteModelInvocationLoggingConfiguration",
+        "bedrock:PutModelInvocationLoggingConfiguration"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "ArnNotLike": { "aws:PrincipalArn": "arn:aws:iam::*:role/PlatformAdmin" }
+      }
+    }
+  ]
+}
