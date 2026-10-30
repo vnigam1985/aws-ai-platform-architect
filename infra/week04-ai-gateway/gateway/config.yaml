@@ -1,0 +1,21 @@
+# The AI gateway's config, baked into the gateway image (make week4-images).
+# Same shape as local/litellm-config.yaml from week 0, now pointing at Bedrock.
+model_list:
+  - model_name: bank-chat
+    litellm_params:
+      # Set by the ECS task: bedrock/converse/<approved model id>
+      model: os.environ/BANK_MODEL
+      aws_region_name: os.environ/AWS_REGION
+      # Every request through the gateway gets the bank guardrail (week 3).
+      # The week 3 permissions boundary would reject calls without it anyway.
+      guardrailConfig:
+        guardrailIdentifier: os.environ/GUARDRAIL_ARN
+        guardrailVersion: os.environ/GUARDRAIL_VERSION
+
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY
+  database_url: os.environ/DATABASE_URL
+
+litellm_settings:
+  # Don't send telemetry; the VPC has no internet anyway.
+  telemetry: false
