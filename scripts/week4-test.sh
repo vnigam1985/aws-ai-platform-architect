@@ -26,7 +26,8 @@ R=$(http "$(chat "$DEMO" bank-chat 'What does an AI gateway do? One sentence.')"
 check "team key works (200)"               "$(echo "$R" | code)" "200"
 echo "$R" | python3 -c 'import json,sys;b=json.load(sys.stdin)["body"];print("      answer:", b["choices"][0]["message"]["content"] if isinstance(b,dict) and "choices" in b else b)'
 check "team key can't use other models (403)" "$(http "$(chat "$DEMO" some-other-model hi)" | code)" "403"
-c3=$(http "$(chat "$DEMO" bank-chat hi)" | code)
-check "3rd call in a minute is throttled (429)" "$c3" "429"
+last=""
+for i in 1 2 3; do last=$(http "$(chat "$DEMO" bank-chat hi)" | code); done
+check "the key's 2-per-minute limit kicks in (429)" "$last" "429"
 
 echo; echo "$pass passed, $fail failed"; [ "$fail" -eq 0 ]
